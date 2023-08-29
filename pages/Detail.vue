@@ -96,7 +96,7 @@ onBeforeMount(() => {
     onUpdated(() => {
 
         if(route.query.id != id){
-            window.location.reload(true);
+            window.location.reload();
         }
         //  본문 이미지 태그를 동적으로 불러와, 이미지의 크기를 반응형으로 조정합니다.
         const imgTag = document.querySelectorAll('.detailContent img');

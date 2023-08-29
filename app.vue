@@ -19,6 +19,17 @@
                 </ul>
             </div>
 
+            <div class="tag--list--container">
+                <p class="rank--title">태그</p>
+                 <div class="tag--group">
+                     <span class="tag--chip" v-for="(tag, idx) in tags" :key="idx" @click="tagSearch(tag)">
+                         {{tag}}
+                     </span>
+
+                 </div>
+
+            </div>
+
 
 
         </v-navigation-drawer>
@@ -40,14 +51,9 @@
             <v-btn icon @click="isActive = !showModal">
                 <v-icon>mdi-magnify</v-icon>
             </v-btn>
-            <v-btn icon >
+            <v-btn icon @click="toGit">
                 <v-icon>mdi-github</v-icon>
             </v-btn>
-            <!--            <v-btn @click="loginModal" v-if="!loginStatus">-->
-            <!--                <v-icon >mdi-login</v-icon>-->
-
-            <!--            </v-btn>-->
-            <!--                <v-btn v-else @click="showUserModal">hello {{id}}</v-btn>-->
         </v-app-bar>
 
 
@@ -58,6 +64,7 @@
         <v-footer
                 class="bg-indigo-lighten-1 text-center d-flex flex-column"
                 padless
+                elevation="9"
 
 
         >
@@ -85,21 +92,28 @@
         <v-dialog
                 v-model="isActive"
                 width="auto"
+                location="top"
         >
-            <v-card>
+            <v-card width="700">
                 <v-card-text>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                        <v-text-field
+                            :loading="loading"
+                            density="compact"
+                            variant="solo"
+                            label="블로그 검색"
+                            append-inner-icon="mdi-magnify"
+                            single-line
+                            hide-details
+                            @click:append-inner="onClick"
+                        ></v-text-field>
                 </v-card-text>
-                <v-card-actions>
-                    <v-btn color="primary" block @click="isActive = false">Close Dialog</v-btn>
-                </v-card-actions>
             </v-card>
         </v-dialog>
     </v-app>
 </template>
 
 <script setup lang="ts">
-// import { useTheme } from 'vuetify';
+import { useTheme } from 'vuetify';
 import { ref, watch, onMounted, onBeforeUnmount, onBeforeMount } from 'vue';
 import axios from "axios";
 import { useCommonStore} from "~/store";
@@ -108,23 +122,21 @@ import { useCommonStore} from "~/store";
 
 useHead({
     title: '이클립스 데브 인사이트',
-    description: '이클립스 데브 인사이트 블로그입니다. 재미로 쓰는 개발 블로그입니다.',
     meta:[
-        {"http-equiv": "Content-Security-Policy", content: "upgrade-insecure-requests"}
+        {"http-equiv": "Content-Security-Policy", content: "upgrade-insecure-requests"},
+        {name: 'viewport', content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'},
+
     ]
 })
 const router = useRouter()
-// const theme = useTheme();
+const theme = useTheme();
 const store = useCommonStore();
 const colorMode = useColorMode()
-
+const loading = ref(false);
 const drawer = ref(false);
 const isActive = ref(false);
-const password = ref();
-const rememberMe = ref(false);
-const userModal = ref(false);
-// const userStore = useUserStore();
 const article_rank = ref([]);
+const tags = ref([]);
 const icons = ref([
     'mdi-facebook',
     'mdi-twitter',
@@ -156,6 +168,8 @@ onMounted(() => {
     }).catch((err) => {
         console.log(err)
     })
+
+    fetch_tags()
 });
 
 onBeforeUnmount(() => {
@@ -168,10 +182,10 @@ const detail = (id :string) => {
 
 
 const toggleTheme = () => {
-    colorMode.preference = colorMode.preference === 'dark' ? 'light' : 'dark';
-    // const newTheme = theme.global.name.value === 'dark' ? 'light' : 'dark';
-    // theme.global.name.value = newTheme;
-    // localStorage.setItem('theme', newTheme);
+    // colorMode.preference = colorMode.preference === 'dark' ? 'light' : 'dark';
+    const newTheme = theme.global.name.value === 'dark' ? 'light' : 'dark';
+    theme.global.name.value = newTheme;
+    localStorage.setItem('theme', newTheme);
 
 
     store.toggleTheme(); // store에 저장
@@ -193,6 +207,28 @@ const fetchData = () => {
     }).catch((err) => {
         console.log(err)
     })
+}
+
+const fetch_tags = () => {
+    axios({
+        method: 'GET',
+        url: `${url}tags/`
+        // url: 'http://127.0.0.1:8000/v1/tags/'
+    }).then((res) => {
+        tags.value = res.data
+    }).catch((err) => {
+        console.log(err)
+    })
+}
+
+const onClick = () => {
+    // 검색 기능 구현 필요
+    loading.value = true;
+    setTimeout(() => (loading.value = false), 2000);
+};
+
+const tagSearch = (tag: string) => {
+    router.push({path: '/Blog', query: {tag: tag}})
 }
 
 
@@ -312,6 +348,36 @@ item--hover{
     padding: 20px;
     box-sizing: border-box;
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+.tag--group{
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.tag--chip{
+    font-family: "BM Hanna Pro";
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    margin-top: 7px;
+    margin-left: 4px;
+    cursor: pointer;
+    list-style: none;
+    border-bottom: 1px solid #e0e0e0;
+    margin-right: 5px;
+    padding: 7px;
+    border-radius: 15px;
+
+}
+.tag--chip:hover{
+    background-color: #333030;
+    color: #fff;
+}
+.tag--list--container{
+    margin-top: 20px;
 }
 </style>
 

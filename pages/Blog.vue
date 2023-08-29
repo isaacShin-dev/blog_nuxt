@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import axios from "axios";
-import {ref, onMounted, watch} from 'vue'
+import {ref, onMounted, watch, onUpdated} from 'vue'
 
 const board_list = ref([
 ])
@@ -10,13 +10,17 @@ const url = 'https://eclipseaddict.com/v1/'
 // const url = 'http://127.0.0.1:8000/v1/'
 const isHover = ref(false)
 const router = useRouter()
+const route = useRoute()
+const tag = route.query.tag
 useHead({
     meta:[
     ]
 })
 const fetchData = async () => {
+    const tag = route.query.tag
+    const tag_url = tag ? `&tag=${tag}` : ''
     axios({
-        url: `${url}list/?page=${page.value}`,
+        url: `${url}list/?page=${page.value}${tag_url}`,
         method: 'GET',
     }).then((res) => {
         board_list.value = res.data.results
@@ -35,14 +39,20 @@ const detail = (id :string) => {
 onMounted(async () => {
     console.log('mounted', import.meta.env.VITE_API_URL)
     await fetchData()
+});
 
+onUpdated(() => {
 
+    if(route.query.tag != tag){
+        window.location.reload();
+    }
 });
 
 watch(page, async () => {
+    const tag = route.query.tag
+    const tag_url = tag ? `&tag=${tag}` : ''
     try {
-        // axios 요청 등을 이용하여 데이터를 가져오는 로직을 작성합니다.
-        const response = await axios.get(`${url}list/?page=${page.value}`);
+        const response = await axios.get(`${url}list/?page=${page.value}${tag_url}`);
         board_list.value = response.data.results;
     }catch (error) {
         console.error(error);
