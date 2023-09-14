@@ -1,15 +1,17 @@
 <template>
     <v-app id="inspire">
         <v-navigation-drawer v-model="drawer">
+            <NuxtLink to="/">
             <v-list-item
                     prepend-avatar="https://cdn.pixabay.com/photo/2017/08/30/01/55/eclipse-2695630_1280.jpg"
-                    title="By Isaac Giwook Shin"
+                    title="Dev Insight"
             ></v-list-item>
+            </NuxtLink>
             <v-divider></v-divider>
             <v-list density="compact" nav>
                 <v-list-item prepend-icon="mdi-dev-to" title="HOW I WORK" value="HOW I WORK" @click="toBlog"></v-list-item>
                 <v-list-item prepend-icon="mdi-notebook" title="TODAY'S LOG" value="TODAY'S LOG" ></v-list-item>
-                <v-list-item prepend-icon="mdi-card-account-phone-outline" title="CONTACT ME" value="CONTACT ME" ></v-list-item>
+                <v-list-item prepend-icon="mdi-card-account-phone-outline" title="CONTACT ME" value="CONTACT ME" @click="toContact"></v-list-item>
             </v-list>
             <v-divider></v-divider>
             <div class="">
@@ -22,16 +24,13 @@
             <div class="tag--list--container">
                 <p class="rank--title">태그</p>
                  <div class="tag--group">
-                     <span class="tag--chip" v-for="(tag, idx) in tags" :key="idx" @click="tagSearch(tag)">
-                         {{tag}}
+                     <span class="tag--chip" v-for="(tag, idx) in tags" :key="idx" @click="tagSearch(tag.id)">
+                         {{tag.category}}
                      </span>
 
                  </div>
 
             </div>
-
-
-
         </v-navigation-drawer>
 
         <v-app-bar app>
@@ -40,7 +39,7 @@
             </v-app-bar-nav-icon>
 
             <NuxtLink to="/">
-            <v-toolbar-title class="appbar--title" >이클립스 데브 인사이트</v-toolbar-title>
+            <v-toolbar-title class="appbar--title" >데브 인사이트</v-toolbar-title>
             </NuxtLink>
             <v-spacer></v-spacer>
 
@@ -55,40 +54,9 @@
                 <v-icon>mdi-github</v-icon>
             </v-btn>
         </v-app-bar>
-
-
-
         <v-main>
           <NuxtPage />
         </v-main>
-        <v-footer
-                class="bg-indigo-lighten-1 text-center d-flex flex-column"
-                padless
-                elevation="9"
-
-
-        >
-            <div>
-                <v-btn
-                        v-for="icon in icons"
-                        :key="icon"
-                        class="mx-4"
-                        :icon="icon"
-                        variant="text"
-                ></v-btn>
-            </div>
-
-            <div class="pt-0">
-                Every try counts. Every try matters.
-            </div>
-
-            <v-divider></v-divider>
-
-            <div @click="fetchData">
-                {{ new Date().getFullYear() }} — <strong>isaac</strong>
-            </div>
-        </v-footer>
-
         <v-dialog
                 v-model="isActive"
                 width="auto"
@@ -109,28 +77,23 @@
                 </v-card-text>
             </v-card>
         </v-dialog>
+        <v-footer app elevation="4">
+            <span class="white--text w-100 text-center" @click="fetchData">&copy; 2023 - by isaac</span>
+        </v-footer>
     </v-app>
 </template>
 
 <script setup lang="ts">
 import { useTheme } from 'vuetify';
-import { ref, watch, onMounted, onBeforeUnmount, onBeforeMount } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount, } from 'vue';
 import axios from "axios";
 import { useCommonStore} from "~/store";
 
 
 
-useHead({
-    title: '이클립스 데브 인사이트',
-    meta:[
-        {"http-equiv": "Content-Security-Policy", content: "upgrade-insecure-requests"},
-        {name: 'viewport', content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'},
-
-    ]
-})
 const router = useRouter()
-const theme = useTheme();
 const store = useCommonStore();
+const theme = useTheme();
 const colorMode = useColorMode()
 const loading = ref(false);
 const drawer = ref(false);
@@ -147,18 +110,8 @@ const icons = ref([
 const url = 'https://eclipseaddict.com/v1/'
 
 
-// onBeforeMount(() => {
-//     console.log('onBeforeMount');
-//     const savedTheme = localStorage.getItem('theme');
-//     if (savedTheme) {
-//         theme.global.name.value = savedTheme;
-//         if (savedTheme === 'dark') {
-//             document.body.classList.add('dark-mode');
-//         }
-//     }
-// });
-
 onMounted(() => {
+
     axios({
         method: 'GET',
         url: `${url}rank/`
@@ -170,6 +123,12 @@ onMounted(() => {
     })
 
     fetch_tags()
+
+    const preperTheme = localStorage.getItem('theme');
+    if (preperTheme) {
+        theme.global.name.value = preperTheme;
+        store.theme = preperTheme;
+    }
 });
 
 onBeforeUnmount(() => {
@@ -182,17 +141,17 @@ const detail = (id :string) => {
 
 
 const toggleTheme = () => {
-    // colorMode.preference = colorMode.preference === 'dark' ? 'light' : 'dark';
     const newTheme = theme.global.name.value === 'dark' ? 'light' : 'dark';
     theme.global.name.value = newTheme;
     localStorage.setItem('theme', newTheme);
-
-
-    store.toggleTheme(); // store에 저장
+    store.theme = newTheme;
 };
 
 const toGit = () => window.open('https://github.com/isaacShin-dev');
 const toBlog = () => {router.push({path: '/Blog'})}
+
+// const toLog = () => {router.push({path: '/Log'})}
+const toContact = () => {router.push({path: '/Contact'})}
 const fetchData = () => {
     axios({
         method: 'GET',

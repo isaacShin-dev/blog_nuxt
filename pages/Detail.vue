@@ -1,40 +1,18 @@
 <script setup>
+import {useCommonStore} from "~/store";
 import {  onMounted, ref, onBeforeMount, watch, onUpdated, computed} from 'vue'
 import LoadingSpinner from "~/components/common/LoadingSpinner.vue";
-
-
 import axios from "axios";
 import MarkdownIt from "markdown-it";
 
 console.error = () => {};
 console.warn = () => {};
 // console.log = () => {};
-
-useHead({
-    title: '',
-    meta: [
-        { name: 'description', content: 'My amazing site.' }
-    ],
-    bodyAttrs: {
-        class: 'test'
-    },
-    script: [
-        {
-            src: 'https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?autorun=false&skin=sunburst',
-            async: true,
-            defer: true,
-            body: true
-        }
-
-
-    ]
-})
-defineProps({
-    article_id: String
-})
+const store = useCommonStore()
 const markdown = new MarkdownIt();
 const route = useRoute()
 const id = route.query.id
+const metaTitle = route.query.title
 const url = 'https://eclipseaddict.com/v1/'
 // const url = 'http://127.0.0.1:8000/v1/'
 const colorList = [
@@ -48,6 +26,12 @@ const colorList = [
     'pink-lighten-1',
 ]
 
+defineProps({
+    article_id: String,
+    article_title: String,
+})
+
+
 const detail_content = ref(null)
 const title = ref(null)
 const cover = ref(null)
@@ -55,11 +39,59 @@ const created_at = ref(null)
 const views = ref(null)
 const category_list = ref(null)
 const isLoaded = ref(false)
+
+// const CurrentUrl = window.location.href
+// const urlParams = new URLSearchParams(CurrentUrl);
+// const metaTitle = urlParams.get('title');
+console.log('metaTitle',metaTitle)
+
+useHead({
+    title: `데브 인사이트 | 블로그`,
+    meta:[
+        {"http-equiv": "Content-Security-Policy", content: "upgrade-insecure-requests"},
+        {name: 'viewport', content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'},
+        {name: 'description', content: '데브 인사이트 개발 블로그 | 데브 인사이트'},
+        {name: 'keywords', content: '데브 인사이트, 개발 블로그, 데브 인사이트 개발 블로그, 데브 인사이트 블로그'},
+        { property: 'article:author', content: 'isaac'},
+        { name: 'twitter:creator', content: '@isaac' },
+        { name: 'twitter:card', content: '/share-banner.png' },
+        { name: 'twitter:title', content: 'devinsight' },
+        { name: 'twitter:description', content: 'devinsight' },
+        { name: 'twitter:image', content: '/share-banner.png' },
+        { name: 'twitter:site', content: '@devinsight.kr' },
+
+        { name: 'og:title', content: 'devinsight' },
+        { name: 'og:description', content: '데브 인사이트 개발 블로그 | 데브 인사이트' },
+        { name: 'og:image', content: '/share-banner.png' },
+        { name: 'og:site_name', content: 'devinsight' },
+        { name: 'og:image', content: '/share-banner.png' },
+        { property: 'og:title', content: `데브 인사이트 | 블로그`  },
+        { property: 'og:image', content: '/share-banner.png' },
+        { property: 'og:type', content: 'Article' },
+        { property: 'og:description', content: '데브 인사이트 개발 블로그 | 데브 인사이트' },
+        { property: 'og:site_name', content: 'devinsight.kr' },
+        { property: 'og:locale', content: 'ko_KR'},
+        {property: 'og:url', content: `https://devinsight.kr/Detail?id=${id}&title=${metaTitle}`},
+
+    ],    script: [
+        {
+            src: 'https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?autorun=false&skin=sunburst',
+            async: true,
+            defer: true,
+            body: true
+        }
+    ]
+})
+
+
+
 const goBack = () => {
     window.history.back();
 };
 
+
 onBeforeMount(() => {
+    console.log('onBeforeMount')
     window.scroll(0,0)
     axios.get( `${url}article/${id}/` ).then((response) => {
         // console.log(response.data.content)
@@ -71,12 +103,46 @@ onBeforeMount(() => {
         category_list.value = response.data.categories
         console.log('category_list', category_list.value)
 
+        useHead({
+            title: `데브 인사이트 | ${title.value}`,
+            meta:[
+                {"http-equiv": "Content-Security-Policy", content: "upgrade-insecure-requests"},
+                {name: 'viewport', content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'},
+                {name: 'description', content: detail_content.value},
+                {name: 'keywords', content: category_list.value.join(',')},
+                { property: 'article:author', content: 'isaac'},
+                { name: 'twitter:creator', content: '@isaac' },
+                { name: 'twitter:card', content: '/share-banner.png' },
+                { name: 'twitter:title', content: `devinsight | ${title.value}` },
+                { name: 'twitter:description', content: 'devinsight' },
+                { name: 'twitter:image', content: '/share-banner.png' },
+                { name: 'twitter:site', content: '@devinsight.kr' },
+
+                { name: 'og:title', content: `devinsight | ${title.value}`},
+                { name: 'og:description', content: `devinsight | ${title.value}` },
+                { name: 'og:image', content: '/share-banner.png' },
+                { name: 'og:site_name', content: 'devinsight' },
+                { name: 'og:image', content: '/share-banner.png' },
+                { property: 'og:title', content: `devinsight | ${title.value}`  },
+                { property: 'og:image', content: '/share-banner.png' },
+                { property: 'og:type', content: 'Article' },
+                { property: 'og:description', content: metaTitle },
+                { property: 'og:site_name', content: 'devinsight.kr' },
+                { property: 'og:locale', content: 'ko_KR' },
+
+            ]
+        })
+
     }   ).catch((error) => {
         console.log(error)
     } )
 }),
 
     onMounted(()=>{
+        console.log('onMounted')
+
+
+
         // utterances 댓글 기능
         const scriptTag = document.createElement('SCRIPT')
         scriptTag.setAttribute('src', 'https://utteranc.es/client.js')
@@ -126,7 +192,6 @@ onUnmounted(() => {
     });
     PR.prettyPrint();
 });
-
 const date_foramt = computed(() => {
     const date = new Date(created_at.value)
     const year = date.getFullYear()
@@ -134,10 +199,6 @@ const date_foramt = computed(() => {
     const day = date.getDate()
     return `${year}년 ${month}월 ${day}일`
 })
-
-
-
-
 </script>
 <template>
     <v-btn icon class="backBtn" @click="goBack" elevation="7">

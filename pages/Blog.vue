@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import axios from "axios";
 import {ref, onMounted, watch, onUpdated} from 'vue'
+import { useCommonStore} from "~/store";
 
 const board_list = ref([
 ])
@@ -11,9 +12,36 @@ const url = 'https://eclipseaddict.com/v1/'
 const isHover = ref(false)
 const router = useRouter()
 const route = useRoute()
+const store = useCommonStore()
 const tag = route.query.tag
-useHead({
+const header = useHead({
+    title: `데브 인사이트 | 블로그`,
     meta:[
+        {"http-equiv": "Content-Security-Policy", content: "upgrade-insecure-requests"},
+        {name: 'viewport', content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'},
+        {name: 'description', content: '데브 인사이트 개발 블로그 | 데브 인사이트'},
+        {name: 'keywords', content: '데브 인사이트, 개발 블로그, 데브 인사이트 개발 블로그, 데브 인사이트 블로그'},
+        { property: 'article:author', content: 'isaac'},
+        { name: 'twitter:creator', content: '@isaac' },
+        { name: 'twitter:card', content: '/share-banner.png' },
+        { name: 'twitter:title', content: 'devinsight' },
+        { name: 'twitter:description', content: 'devinsight' },
+        { name: 'twitter:image', content: '/share-banner.png' },
+        { name: 'twitter:site', content: '@devinsight.kr' },
+
+        { name: 'og:title', content: 'devinsight' },
+        { name: 'og:description', content: '데브 인사이트 개발 블로그 | 데브 인사이트' },
+        { name: 'og:image', content: '/share-banner.png' },
+        { name: 'og:site_name', content: 'devinsight' },
+        { name: 'og:image', content: '/share-banner.png' },
+        { property: 'og:title', content: `데브 인사이트 | 블로그`  },
+        { property: 'og:image', content: '/share-banner.png' },
+        { property: 'og:type', content: 'Article' },
+        { property: 'og:description', content: '데브 인사이트 개발 블로그 | 데브 인사이트' },
+        { property: 'og:site_name', content: 'devinsight.kr' },
+        { property: 'og:locale', content: 'ko_KR'},
+        {property: 'og:url', content: `https://devinsight.kr/Blog/`},
+
     ]
 })
 const fetchData = async () => {
@@ -31,10 +59,10 @@ const fetchData = async () => {
     })
 }
 
-const detail = (id :string) => {
-    //router push
-    // router.push({path: `/posts/${id}`})
-    router.push({path:'/Detail',  query:{id: id}})
+const detail = (id :string, title:string, description:string, cover:string) => {
+    // store.setDetail(title, description, cover)
+
+    router.push({path:'/Detail',  query:{id: id, title: title}})
 }
 onMounted(async () => {
     console.log('mounted', import.meta.env.VITE_API_URL)
@@ -66,7 +94,9 @@ watch(page, async () => {
     <v-container fluid class="container--bottom">
         <v-row dense>
             <v-col v-for="(board, idx) in board_list" :key="idx" sm="6" md="4" lg="3" xl="2" xxl="3">
-                <v-card class="mx-auto article--card" max-width="344" elevation="3" v-ripple @click="detail(board.id)">
+                <v-card class="mx-auto article--card" max-width="344" min-height="320" elevation="3" v-ripple
+                        @click="detail(board.id, board.title, board.title, board.cover)"
+                >
                     <v-img :src="board.cover" lazy-src="/loading.gif" height="200px" cover>
                     </v-img>
                     <v-card-title class="cardTitle">{{board.title}}</v-card-title>
@@ -75,14 +105,6 @@ watch(page, async () => {
                         <v-spacer></v-spacer>
                         <v-icon icon="mdi-eye" size="x-small"></v-icon>
                         <span class="viewcount--small">{{board.views}}</span>
-                    </v-card-subtitle>
-                    <v-card-subtitle>
-                        <v-chip-group>
-                            <v-chip size="small" class="mx-1" dark v-for="(category, idx) in board.categories_data" :key="idx">
-                                {{category.category}}
-                            </v-chip>
-                        </v-chip-group>
-
                     </v-card-subtitle>
                 </v-card>
             </v-col>
