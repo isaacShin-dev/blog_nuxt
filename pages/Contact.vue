@@ -114,7 +114,7 @@ a{
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: start;
+    align-items: flex-start;
     align-self: center;
 }
 .flex--child--col{
@@ -124,7 +124,7 @@ a{
     display: flex;
     flex-direction: column;
     justify-content: start;
-    align-items: start;
+    align-items: flex-start;
     align-self: center;
 }
 .grid--child--col{
@@ -191,7 +191,7 @@ a{
         display: flex;
         flex-direction: column;
         justify-content: start;
-        align-items: start;
+        align-items: flex-start;
         align-self: center;
     }
     .contact--card--flex{

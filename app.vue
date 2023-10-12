@@ -78,7 +78,7 @@
             </v-card>
         </v-dialog>
         <v-footer app elevation="4">
-            <span class="white--text w-100 text-center" @click="fetchData">&copy; 2023 - by isaac</span>
+            <span class="white--text w-100 text-center" @click="fetchData">Dev insight - by isaac</span>
         </v-footer>
     </v-app>
 </template>
@@ -86,10 +86,8 @@
 <script setup lang="ts">
 import { useTheme } from 'vuetify';
 import { ref, watch, onMounted, onBeforeUnmount, } from 'vue';
-import axios from "axios";
 import { useCommonStore} from "~/store";
-
-
+import http from '@/assets/js/http-common.js';
 
 const router = useRouter()
 const store = useCommonStore();
@@ -100,28 +98,14 @@ const drawer = ref(false);
 const isActive = ref(false);
 const article_rank = ref([]);
 const tags = ref([]);
-const icons = ref([
-    'mdi-facebook',
-    'mdi-twitter',
-    'mdi-linkedin',
-    'mdi-instagram',
-])
-// const url = 'http://127.0.0.1:8000/v1/'
-const url = 'https://eclipseaddict.com/v1/'
 
+
+useHead({
+    link: [{rel: 'icon', href: '/favicon.ico'}]
+})
 
 onMounted(() => {
-
-    axios({
-        method: 'GET',
-        url: `${url}rank/`
-    }).then((res) => {
-        console.log(res.data)
-        article_rank.value = res.data.results
-    }).catch((err) => {
-        console.log(err)
-    })
-
+    rank()
     fetch_tags()
 
     const preperTheme = localStorage.getItem('theme');
@@ -132,7 +116,6 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-    console.log('onBeforeUnmount')
 
 });
 const detail = (id :string) => {
@@ -153,28 +136,27 @@ const toBlog = () => {router.push({path: '/Blog'})}
 // const toLog = () => {router.push({path: '/Log'})}
 const toContact = () => {router.push({path: '/Contact'})}
 const fetchData = () => {
-    axios({
-        method: 'GET',
-        url: `${url}fetch_new_data/`
-    }).then((res) => {
+    http.get("/fetch_new_data/").then((res) => {
         if (res.data.count > 0){
-            alert('블로그에 새로운 글이 있습니다. 새로고침을 해주세요.')
+            window.location.reload()
         }else{
-            alert('블로그에 새로운 글이 없습니다. 최신 상태입니다.')
+            console.log("all up to date")
         }
-
     }).catch((err) => {
         console.log(err)
     })
 }
 
 const fetch_tags = () => {
-    axios({
-        method: 'GET',
-        url: `${url}tags/`
-        // url: 'http://127.0.0.1:8000/v1/tags/'
-    }).then((res) => {
+    http.get("/tags/").then((res) => {
         tags.value = res.data
+    }).catch((err) => {
+        console.log(err)
+    })
+}
+const rank = () => {
+    http.get("/rank/").then((res) => {
+        article_rank.value = res.data.results
     }).catch((err) => {
         console.log(err)
     })
@@ -278,13 +260,10 @@ a{
     font-family: "BM Hanna Pro";
     font-size: 13px;
     font-weight: bold;
-    margin-bottom: 20px;
-    margin-top: 7px;
-    margin-left: 25px;
     cursor: pointer;
     list-style: none;
     border-bottom: 1px solid #e0e0e0;
-    margin-right: 5px;
+    margin: 7px 5px 20px 25px;
 
 }
 item--hover{
@@ -317,23 +296,20 @@ item--hover{
 }
 
 .tag--chip{
-    font-family: "BM Hanna Pro";
-    font-size: 13px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    margin-top: 7px;
-    margin-left: 4px;
+    font-family: sans-serif;
+    font-size: 11px;
+    padding: 4px 10px !important;
     cursor: pointer;
     list-style: none;
-    border-bottom: 1px solid #e0e0e0;
-    margin-right: 5px;
+    border: 1px solid #120d0d;
+    margin: 7px 5px 20px 4px;
     padding: 7px;
     border-radius: 15px;
 
 }
 .tag--chip:hover{
-    background-color: #333030;
-    color: #fff;
+    background-color: rgba(255, 255, 255, 0.17);
+    color: #120d0d;
 }
 .tag--list--container{
     margin-top: 20px;

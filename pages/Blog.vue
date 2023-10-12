@@ -2,13 +2,14 @@
 import axios from "axios";
 import {ref, onMounted, watch, onUpdated} from 'vue'
 import { useCommonStore} from "~/store";
+import http from '@/assets/js/http-common.js';
 
 const board_list = ref([
 ])
 const page = ref(1)
 const pageCount = ref(0)
-const url = 'https://eclipseaddict.com/v1/'
-// const url = 'http://127.0.0.1:8000/v1/'
+// const url = 'https://eclipseaddict.com/v1/'
+const url = 'http://127.0.0.1:8000/v1/'
 const isHover = ref(false)
 const router = useRouter()
 const route = useRoute()
@@ -45,12 +46,8 @@ const header = useHead({
     ]
 })
 const fetchData = async () => {
-    const tag = route.query.tag
-    const tag_url = tag ? `&tag=${tag}` : ''
-    axios({
-        url: `${url}list/?page=${page.value}${tag_url}`,
-        method: 'GET',
-    }).then((res) => {
+    const tag_url = route.query.tag ? `&tag=${tag}` : ''
+    http.get(`/list/?page=${page.value}${tag_url}`).then((res) => {
         board_list.value = res.data.results
         // total page count 계산 반올림
         pageCount.value = Math.ceil(res.data.count / 8)
@@ -65,7 +62,6 @@ const detail = (id :string, title:string, description:string, cover:string) => {
     router.push({path:'/Detail',  query:{id: id, title: title}})
 }
 onMounted(async () => {
-    console.log('mounted', import.meta.env.VITE_API_URL)
     await fetchData()
 });
 
@@ -153,9 +149,7 @@ watch(page, async () => {
     list-style-type: none;
     justify-content: center;
     position: fixed ;
-    bottom: 15%;
-    right: 0;
-    left: 0;
+    bottom: 7%;
     margin: 0 auto;
     width: 100%;
     opacity: 0.4;

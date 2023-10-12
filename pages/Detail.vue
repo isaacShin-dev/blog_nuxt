@@ -3,18 +3,18 @@ import {useCommonStore} from "~/store";
 import {  onMounted, ref, onBeforeMount, watch, onUpdated, computed} from 'vue'
 import LoadingSpinner from "~/components/common/LoadingSpinner.vue";
 import axios from "axios";
-import MarkdownIt from "markdown-it";
-
+// import MarkdownIt from "markdown-it";
+import http from '@/assets/js/http-common.js';
 console.error = () => {};
 console.warn = () => {};
 // console.log = () => {};
 const store = useCommonStore()
-const markdown = new MarkdownIt();
+// const markdown = new MarkdownIt();
 const route = useRoute()
 const id = route.query.id
 const metaTitle = route.query.title
-const url = 'https://eclipseaddict.com/v1/'
-// const url = 'http://127.0.0.1:8000/v1/'
+// const url = 'https://eclipseaddict.com/v1/'
+const url = 'http://127.0.0.1:8000/v1/'
 const colorList = [
     'red-lighten-1',
     'indigo-lighten-1',
@@ -39,7 +39,7 @@ const created_at = ref(null)
 const views = ref(null)
 const category_list = ref(null)
 const isLoaded = ref(false)
-
+const router = useRouter()
 // const CurrentUrl = window.location.href
 // const urlParams = new URLSearchParams(CurrentUrl);
 // const metaTitle = urlParams.get('title');
@@ -82,7 +82,9 @@ useHead({
         }
     ]
 })
-
+const tagSearch = (tag) => {
+    router.push({path: '/Blog', query: {tag: tag}})
+}
 
 
 const goBack = () => {
@@ -93,7 +95,7 @@ const goBack = () => {
 onBeforeMount(() => {
     console.log('onBeforeMount')
     window.scroll(0,0)
-    axios.get( `${url}article/${id}/` ).then((response) => {
+    http.get( `/article/${id}/` ).then((response) => {
         // console.log(response.data.content)
         detail_content.value = response.data.content
         title.value = response.data.title
@@ -138,9 +140,8 @@ onBeforeMount(() => {
     } )
 }),
 
-    onMounted(()=>{
+    onMounted(()=> {
         console.log('onMounted')
-
 
 
         // utterances 댓글 기능
@@ -156,8 +157,9 @@ onBeforeMount(() => {
         const commentSection = document.getElementById('commentSection')
         console.log(commentSection)
         commentSection.appendChild(scriptTag)
-        }
-    )
+
+
+    })
 
     onUpdated(() => {
 
@@ -211,7 +213,7 @@ const date_foramt = computed(() => {
     <div id="app" class="dark-mode">
         <v-container v-if="isLoaded">
             <v-chip-group>
-                <v-chip size="small" class="mx-1" variant="outlined" dark v-for="(category, idx) in category_list" :key="idx">
+                <v-chip size="small" class="mx-1" variant="outlined" dark v-for="(category, idx) in category_list" :key="idx" @click="tagSearch(category.id)">
                     {{category}}
                 </v-chip>
             </v-chip-group>
@@ -254,6 +256,7 @@ const date_foramt = computed(() => {
 }
 .detailContent {
     overflow: scroll !important;
+    padding: 0 15px;
 }
 
 .backBtn{
@@ -330,6 +333,11 @@ pre.prettyprint {
     height: auto !important;
     margin: 0.5rem 0;
 }
+.img--w90{
+    width: 90% !important;
+    height: auto !important;
+    margin: 0.5rem 0;
+}
 #commentSection{
     margin-top: 50px;
 
@@ -343,5 +351,66 @@ pre.prettyprint {
     max-width: 100%;
     margin-bottom: 15rem;
 
+}
+ol{
+    list-style-type: decimal;
+    margin-left: 2rem;
+}
+ol{
+    list-style-type: disc;
+    margin-left: 2rem;
+}
+
+.bookmark--wrapper{
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 80%;
+    height: 150px;
+    margin-top: 20px;
+    margin-left: 5px;
+    box-shadow: 8px 0px 9px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    flex-grow: 1
+}
+
+.bookmark--title{
+    display: flex;
+    flex-direction: column;
+    width: 350px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #120d0d;
+    margin-left: 20px;
+
+}
+.title--span--subtitle{
+    font-size: 8px;
+    font-weight: normal;
+    color: #120d0d;
+}
+.bookmark--left{
+    display: flex;
+    align-content: flex-start;
+    flex-direction: row;
+    //width: inherit;
+}
+.bookmark-image{
+    width: 100%;
+    height: 100%;
+    max-width: 270px !important;
+    border-radius: 10px;
+    box-shadow: #4f625f 0px 0px 5px;
+}
+
+.image--container{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
 }
 </style>

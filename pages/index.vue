@@ -38,7 +38,7 @@ const image = ref('/assets/kitten-1556444_1920.png')
 const menu_list = ref([
     {text: 'HOW I WORK.', isHover: false, to: 'Blog'},
     {text: 'TODAY\'S LOGS.', isHover: false, to: 'Log'},
-    {text: 'CONTACT ME.', isHover: false, to: 'ContactMe'}])
+    {text: 'CONTACT ME.', isHover: false, to: 'Contact'}])
 const card_img = ref('/assets/share-banner.png')
 
 
@@ -58,7 +58,7 @@ export default defineComponent({
             meta:[
                 {"http-equiv": "Content-Security-Policy", content: "upgrade-insecure-requests"},
                 {name: 'viewport', content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'},
-                {name: 'description', content: '데브 인사이트 | 개발 문화를 사랑하고 개발자들을 위한 블로그를 만들고 있습니다. 궁금증에 대한 무름표를 끊없이 던지고, 끊임없이 고민하고, 끊임없이 공부하고, 끊임없이 기록합니다.'},
+                {name: 'description', content: '데브 인사이트 | 궁금증에 대한 무름표를 끊없이 던지고, 끊임없이 고민하며, 끊임없이 공부하고, 끊임없이 기록합니다.'},
                 {name: 'keywords', content: '데브 인사이트, 개발 블로그, 데브 인사이트 개발 블로그, 데브 인사이트 블로그'},
                 { property: 'article:author', content: 'isaac'},
                 { name: 'twitter:creator', content: '@isaac' },
