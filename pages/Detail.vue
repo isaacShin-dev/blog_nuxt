@@ -295,28 +295,28 @@ const date_foramt = computed(() => {
     padding: 0.5rem;
     border-radius: 5px;
     margin: 0.5rem 0;
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     font-family: 'Fira Code', monospace;
     color: #444;
 }
 
 blockquote{
     padding: 0.5rem;
-    border-left: 2px solid black;
+    border-left: 2px solid #4a4949;
     margin: 0.5rem 0;
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     font-family: 'Fira Code', monospace;
     font-weight: bold;
 }
 .inline--code--block{
     display: inline-block;
-    background-color: #e8e8e8;
+    background-color: #31312E;
     padding: 0.1rem 0.4rem;
     border-radius: 5px;
     margin: 0.5rem 0;
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     font-family: 'Fira Code', monospace;
-    color: #d20a0a;
+    color: #E85756;
 }
 pre.prettyprint {
     padding: 14px;
@@ -352,13 +352,14 @@ pre.prettyprint {
     margin-bottom: 15rem;
 
 }
-ol{
-    list-style-type: decimal;
-    margin-left: 2rem;
-}
-ol{
+ul, ol{
     list-style-type: disc;
     margin-left: 2rem;
+}
+h1,h2,h3,h4,h5,h6{
+    font-family: 'Fira Code', monospace;
+    font-weight: bolder;
+    margin: 10px 0px;
 }
 
 .bookmark--wrapper{
@@ -382,14 +383,14 @@ ol{
     width: 350px;
     font-size: 15px;
     font-weight: bold;
-    color: #120d0d;
-    margin-left: 20px;
+    margin-left: 19px;
+
 
 }
 .title--span--subtitle{
     font-size: 8px;
     font-weight: normal;
-    color: #120d0d;
+
 }
 .bookmark--left{
     display: flex;
@@ -412,5 +413,9 @@ ol{
     justify-content: center;
     align-content: center;
     align-items: center;
+}
+.img--shadow{
+    box-shadow: #4f625f 0px 0px 13px;
+    border-radius: 10px;
 }
 </style>

@@ -9,9 +9,9 @@
             </NuxtLink>
             <v-divider></v-divider>
             <v-list density="compact" nav>
-                <v-list-item prepend-icon="mdi-dev-to" title="HOW I WORK" value="HOW I WORK" @click="toBlog"></v-list-item>
-                <v-list-item prepend-icon="mdi-notebook" title="TODAY'S LOG" value="TODAY'S LOG" ></v-list-item>
-                <v-list-item prepend-icon="mdi-card-account-phone-outline" title="CONTACT ME" value="CONTACT ME" @click="toContact"></v-list-item>
+                <v-list-item prepend-icon="mdi-dev-to" title="HOW I WORK" value="HOW I WORK" @click="goTo('Blog')"></v-list-item>
+                <v-list-item prepend-icon="mdi-notebook" title="TODAY'S LOG" value="TODAY'S LOG" @click="goTo('Log')"></v-list-item>
+                <v-list-item prepend-icon="mdi-card-account-phone-outline" title="CONTACT ME" value="CONTACT ME" @click="goTo('Contact')"></v-list-item>
             </v-list>
             <v-divider></v-divider>
             <div class="">
@@ -131,10 +131,14 @@ const toggleTheme = () => {
 };
 
 const toGit = () => window.open('https://github.com/isaacShin-dev');
-const toBlog = () => {router.push({path: '/Blog'})}
+const goTo = (to: string) => {
+    if(to === 'Log'){
+        alert("준비중입니다.")
+        return
+    }
+    router.push({path: `/${to}`})
+}
 
-// const toLog = () => {router.push({path: '/Log'})}
-const toContact = () => {router.push({path: '/Contact'})}
 const fetchData = () => {
     http.get("/fetch_new_data/").then((res) => {
         if (res.data.count > 0){
@@ -309,7 +313,7 @@ item--hover{
 }
 .tag--chip:hover{
     background-color: rgba(255, 255, 255, 0.17);
-    color: #120d0d;
+    color: #ccc8c8;
 }
 .tag--list--container{
     margin-top: 20px;

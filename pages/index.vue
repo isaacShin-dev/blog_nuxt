@@ -105,6 +105,10 @@ export default defineComponent({
                 menu_list.value[idx].isHover = false},
             //Routers
             todestination: (to) => {
+                if(to == "Log"){
+                    alert("준비중입니다.")
+                    return
+                }
                 router.push({path: `/${to}`})
             },
         }
